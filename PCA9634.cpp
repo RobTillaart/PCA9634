@@ -2,13 +2,13 @@
 //    FILE: PCA9634.cpp
 //  AUTHOR: Rob Tillaart
 //    DATE: 03-01-2022
-// VERSION: 0.1.0
+// VERSION: 0.1.1
 // PURPOSE: Arduino library for PCA9634 I2C LED driver
 //     URL: https://github.com/RobTillaart/PCA9634
 //
 //  HISTORY:
 //  0.1.0   2022-01-03  initial version -- based upon 0.3.2 PCA9635
-
+//  0.1.1   2022-01-04  minor fixes 
 
 
 #include "PCA9634.h"
