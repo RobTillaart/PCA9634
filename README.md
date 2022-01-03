@@ -14,7 +14,7 @@ Arduino library for PCA9634 I2C 8 bit PWM LED driver, 8 channel.
 ## Description
 
 This library is to control the I2C PCA9634 PWM extender.
-The 16 channels are independently configurable is steps of 1/256.
+The 8 channels are independently configurable is steps of 1/256.
 this allows for better than 1% fine tuning of the duty-cycle
 of the PWM signal. 
 
@@ -41,12 +41,12 @@ multiple Wire instances (yet).
 - **uint8_t setLedDriverMode(uint8_t channel, uint8_t mode)** mode is 0..3 See datasheet for full details.
 - **uint8_t getLedDriverMode(uint8_t channel)** returns the current mode of the channel.
 
-| LED mode           | Value | Description |
-|:-------------------|:-----:|:------------|
-| PCA9634_LEDOFF     | 0x00  | led is 100% off, default @startup
-| PCA9634_LEDON      | 0x01  | led is 100% on. 
-| PCA9634_LEDPWM     | 0x02  | set LED in PWM mode, 0..255
-| PCA9634_LEDGRPPWM  | 0x03  | add LED to the GRPPWM*
+| LED mode           | Value | Description                       |
+|:-------------------|:-----:|:----------------------------------|
+| PCA9634_LEDOFF     | 0x00  | led is 100% off, default @startup |
+| PCA9634_LEDON      | 0x01  | led is 100% on.                   |
+| PCA9634_LEDPWM     | 0x02  | set LED in PWM mode, 0..255       |
+| PCA9634_LEDGRPPWM  | 0x03  | add LED to the GRPPWM*            |
 
 \* all LEDs in the group GRPPWM can be set to the same PWM value in one set.
 This is ideal to trigger e.g. multiple LEDs (servo's) at same time.
@@ -78,8 +78,8 @@ useful to add or remove a single flag (bit masking).
 
 - **int lastError()** returns **PCA9634_OK** if all is OK, and other error codes otherwise.
 
-| Error code        | Value | Description |
-|:------------------|:-----:|:------------|
+| Error code        | Value | Description          |
+|:------------------|:-----:|:---------------------|
 | PCA9634_OK        | 0x00  | Everything went well
 | PCA9634_ERROR     | 0xFF  | Generic error
 | PCA9634_ERR_WRITE | 0xFE  | Tries to write more elements than PWM channels
@@ -99,5 +99,6 @@ See examples
 - improve documentation
 - unit tests
 - add examples
-
+- follow PCA9635 developments
+- merge with PCA9635 and a PCA963X base class if possible
 

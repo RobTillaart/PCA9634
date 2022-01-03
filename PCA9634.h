@@ -4,7 +4,7 @@
 //  AUTHOR: Rob Tillaart
 //    DATE: 03-01-2022
 // VERSION: 0.1.0
-// PURPOSE: Arduino library for PCA9634 I2C LED driver
+// PURPOSE: Arduino library for PCA9634 I2C LED driver, 8 channel
 //     URL: https://github.com/RobTillaart/PCA9634
 
 
@@ -16,18 +16,19 @@
 
 #define PCA9634_MODE1               0x00
 #define PCA9634_MODE2               0x01
-#define PCA9634_PWM(x)              (0x82+(x))
+#define PCA9634_PWM(x)              (0x82+(x))    // Auto-Increment for all registers.
 
-#define PCA9634_GRPPWM              0x12
-#define PCA9634_GRPFREQ             0x13
+#define PCA9634_GRPPWM              0x0A
+#define PCA9634_GRPFREQ             0x0B
 
 // check datasheet for details
-#define PCA9634_LEDOUT_BASE         0x14    // 0x14..0x17
+#define PCA9634_LEDOUT_BASE         0x0C    // 0x0C..0x0D
 #define PCA9634_LEDOFF              0x00    // default @ startup
 #define PCA9634_LEDON               0x01
 #define PCA9634_LEDPWM              0x02
 #define PCA9634_LEDGRPPWM           0x03
 
+//  Error codes
 #define PCA9634_OK                  0x00
 #define PCA9634_ERROR               0xFF
 #define PCA9634_ERR_WRITE           0xFE
@@ -37,8 +38,8 @@
 #define PCA9634_ERR_I2C             0xFA
 
 // NOT IMPLEMENTED YET
-#define PCA9634_SUBADR(x)   (0x17+(x))  // x = 1..3
-#define PCA9634_ALLCALLADR  0x1B
+#define PCA9634_SUBADR(x)           (0x0E +(x))  // x = 1..3
+#define PCA9634_ALLCALLADR          0x11
 
 
 class PCA9634
@@ -52,6 +53,8 @@ public:
   bool     begin();
   void     reset();
   bool     isConnected();
+
+  uint8_t  channelCount() { return _channelCount; };
 
   uint8_t  setLedDriverMode(uint8_t channel, uint8_t mode);
   uint8_t  getLedDriverMode(uint8_t channel);
@@ -88,6 +91,7 @@ private:
   uint8_t  _register;
   uint8_t  _data;
   int      _error;
+  uint8_t  _channelCount = 8;
 
   TwoWire*  _wire;
 };

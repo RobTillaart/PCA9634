@@ -73,11 +73,10 @@ unittest(test_constants)
 
 unittest(test_constructor)
 {
-  fprintf(stderr, "VERSION: %s\n", PCA9634_LIB_VERSION);
-
   PCA9634 ledArray(0x20);
   assertTrue(ledArray.begin());
   assertTrue(ledArray.isConnected());
+  assertEqual(8, ledArray.channelCount());
 }
 
 

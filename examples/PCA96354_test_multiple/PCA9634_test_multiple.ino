@@ -1,7 +1,7 @@
 //
 //    FILE: PCA9634_test_multiple.ino
 //  AUTHOR: Rob Tillaart
-//    DATE: 2018-02-18
+//    DATE: 2022-01-03
 // PUPROSE: test PCA9634 library
 
 
@@ -26,7 +26,7 @@ void setup()
   Serial.print(millis());
   Serial.print("\t");
   Serial.println("Test - write1 - I");
-  for (int channel = 0; channel < 8; channel++)
+  for (int channel = 0; channel < ledArray.channelCount(); channel++)
   {
     for (int pwm = 0; pwm < 256; pwm++)
     {
@@ -39,7 +39,7 @@ void setup()
   Serial.println("Test - write 1 - II");
   for (int pwm = 0; pwm < 256; pwm++)
   {
-    for (int channel = 0; channel < 8; channel++)
+    for (int channel = 0; channel < ledArray.channelCount(); channel++)
     {
       ledArray.write1(channel, pwm);
       ledArray2.write1(channel, pwm);

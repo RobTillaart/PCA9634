@@ -13,8 +13,6 @@
 
 #include "PCA9634.h"
 
-#define PCA9634_CHANNEL_COUNT       8
-
 
 //////////////////////////////////////////////////////////////
 //
@@ -22,8 +20,9 @@
 //
 PCA9634::PCA9634(const uint8_t deviceAddress, TwoWire *wire)
 {
-  _address = deviceAddress;
-  _wire    = wire;
+  _address      = deviceAddress;
+  _wire         = wire;
+  _channelCount = 8;
 }
 
 
@@ -89,7 +88,7 @@ uint8_t PCA9634::write3(uint8_t channel, uint8_t R, uint8_t G, uint8_t B)
 // checks if [channel + count - 1 > 8]
 uint8_t PCA9634::writeN(uint8_t channel, uint8_t* arr, uint8_t count)
 {
-  if (channel + count > PCA9634_CHANNEL_COUNT)
+  if (channel + count > _channelCount)
   {
     _error = PCA9634_ERR_WRITE;
     return PCA9634_ERROR;
@@ -139,7 +138,7 @@ uint8_t PCA9634::readMode(uint8_t reg)
 
 uint8_t PCA9634::setLedDriverMode(uint8_t channel, uint8_t mode)
 {
-  if (channel >= PCA9634_CHANNEL_COUNT)
+  if (channel >= _channelCount)
   {
     _error  = PCA9634_ERR_CHAN;
     return PCA9634_ERROR;
@@ -164,7 +163,7 @@ uint8_t PCA9634::setLedDriverMode(uint8_t channel, uint8_t mode)
 // returns 0..3 if OK, other values indicate an error
 uint8_t PCA9634::getLedDriverMode(uint8_t channel)
 {
-  if (channel >= PCA9634_CHANNEL_COUNT)
+  if (channel >= _channelCount)
   {
     _error  = PCA9634_ERR_CHAN;
     return PCA9634_ERROR;
