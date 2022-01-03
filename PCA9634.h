@@ -73,12 +73,12 @@ public:
   uint8_t  readMode(uint8_t reg);
 
   // TODO PWM also in %% ?
-  void     setGroupPWM(uint8_t value) { writeReg(PCA9635_GRPPWM, value); }
-  uint8_t  getGroupPWM() { return readReg(PCA9635_GRPPWM); }
+  void     setGroupPWM(uint8_t value) { writeReg(PCA9634_GRPPWM, value); }
+  uint8_t  getGroupPWM() { return readReg(PCA9634_GRPPWM); }
 
   // TODO set time in milliseconds and round to nearest value?
-  void     setGroupFREQ(uint8_t value) { writeReg(PCA9635_GRPFREQ, value); }
-  uint8_t  getGroupFREQ() { return readReg(PCA9635_GRPFREQ); }
+  void     setGroupFREQ(uint8_t value) { writeReg(PCA9634_GRPFREQ, value); }
+  uint8_t  getGroupFREQ() { return readReg(PCA9634_GRPFREQ); }
 
   int      lastError();
 
