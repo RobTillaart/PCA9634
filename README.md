@@ -14,7 +14,7 @@ Arduino library for PCA9634 I2C 8 bit PWM LED driver, 8 channel.
 ## Description
 
 This library is to control the I2C PCA9634 PWM extender.
-The 8 channels are independently configurable is steps of 1/256.
+The 8 channels are independently configurable in steps of 1/256.
 this allows for better than 1% fine tuning of the duty-cycle
 of the PWM signal. 
 
@@ -34,7 +34,7 @@ and optional the Wire interface as parameter.
 multiple Wire instances (yet).
 - **void reset()** resets the library to start up conditions.
 - **bool isConnected()** checks if address is available on I2C bus.
-
+- **uint8_t channelCount()** returns the number of channels = 8.
 
 ### LedDriverMode
 
