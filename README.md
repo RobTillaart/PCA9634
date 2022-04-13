@@ -36,6 +36,7 @@ multiple Wire instances (yet).
 - **bool isConnected()** checks if address is available on I2C bus.
 - **uint8_t channelCount()** returns the number of channels = 8.
 
+
 ### LedDriverMode
 
 - **uint8_t setLedDriverMode(uint8_t channel, uint8_t mode)** mode is 0..3 See datasheet for full details.
@@ -64,6 +65,32 @@ May return **PCA9634_ERR_WRITE** if array has too many elements
 check datasheet for details.
 - **uint8_t readMode(uint8_t reg)** reads back the configured mode, 
 useful to add or remove a single flag (bit masking).
+
+#### Convenience wrappers for mode registers
+
+- **uint8_t  setMode1(uint8_t value)**
+- **uint8_t  setMode2(uint8_t value)**
+- **uint8_t  getMode1()**
+- **uint8_t  getMode2()**
+
+
+#### Constants for mode registers
+
+| Name                    | Value | Description                     |
+|:------------------------|:-----:|:--------------------------------|
+| PCA9634_MODE1_AUTOINCR2 | 0x80  | RO, 0 = disable  1 = enable     |
+| PCA9634_MODE1_AUTOINCR1 | 0x40  | RO, bit1                        |
+| PCA9634_MODE1_AUTOINCR0 | 0x20  | RO  bit0                        |
+| PCA9634_MODE1_SLEEP     | 0x10  | 0 = normal       1 = sleep      |
+| PCA9634_MODE1_SUB1      | 0x08  | 0 = disable      1 = enable     |
+| PCA9634_MODE1_SUB2      | 0x04  | 0 = disable      1 = enable     |
+| PCA9634_MODE1_SUB3      | 0x02  | 0 = disable      1 = enable     |
+| PCA9634_MODE1_ALLCALL   | 0x01  | 0 = disable      1 = enable     |
+|                         |       |                                 |
+| PCA9634_MODE2_BLINK     | 0x20  | 0 = dim          1 = blink      |
+| PCA9634_MODE2_INVERT    | 0x10  | 0 = normal       1 = inverted   |
+| PCA9634_MODE2_STOP      | 0x08  | 0 = on STOP      1 = on ACK     |
+| PCA9634_MODE2_TOTEMPOLE | 0x04  | 0 = open drain   1 = totem-pole |
 
 
 ### Group PWM and frequency
