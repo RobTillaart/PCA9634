@@ -65,7 +65,9 @@ void PCA9634::reset()
 {
   _data = 0;
   _error = 0;
-  writeReg(PCA9634_MODE1, 0x81);  //  AUTOINCR | NOSLEEP | ALLADRR
+
+  uint8_t mode1_mask = PCA9634_MODE1_AUTOINCR2 | PCA9634_MODE1_ALLCALL;
+  writeReg(PCA9634_MODE1, mode1_mask);  //  AUTOINCR | NOSLEEP | ALLADRR  0x81
 }
 
 

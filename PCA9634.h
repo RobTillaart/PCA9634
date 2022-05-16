@@ -16,7 +16,10 @@
 
 #define PCA9634_MODE1               0x00
 #define PCA9634_MODE2               0x01
-#define PCA9634_PWM(x)              (0x82+(x))    // Auto-Increment for all registers.
+
+//  0x80 bit ==> Auto-Increment for all registers.
+//               used in writeN() - see issue #9
+#define PCA9634_PWM(x)              (0x82+(x))
 
 #define PCA9634_GRPPWM              0x0A
 #define PCA9634_GRPFREQ             0x0B
