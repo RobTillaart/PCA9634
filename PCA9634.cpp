@@ -10,7 +10,7 @@
 //  0.1.0   2022-01-03  initial version -- based upon 0.3.2 PCA9635
 //  0.1.1   2022-01-04  minor fixes 
 //  0.1.2   2022-04-13  issue #7 add constants and functions for mode registers.
-//  0.2.0   2022-05-29  rename reset() to initial()
+//  0.2.0   2022-05-29  rename reset() to configure()
 //                      add SUB CALL and ALL CALL functions.
 
 
@@ -40,7 +40,7 @@ bool PCA9634::begin(uint8_t sda, uint8_t scl)
     _wire->begin();
   }
   if (! isConnected()) return false;
-  initial();
+  configure();
   return true;
 }
 #endif
@@ -50,7 +50,7 @@ bool PCA9634::begin()
 {
   _wire->begin();
   if (! isConnected()) return false;
-  initial();
+  configure();
   return true;
 }
 
@@ -63,7 +63,7 @@ bool PCA9634::isConnected()
 }
 
 
-void PCA9634::initial()
+void PCA9634::configure()
 {
   _data = 0;
   _error = 0;

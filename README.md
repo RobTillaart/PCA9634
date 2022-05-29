@@ -31,12 +31,14 @@ library is a 8 channel derived variation of the PCA9635 class.
 and optional the Wire interface as parameter.
 - **bool begin()** initializes the library after startup. Mandatory.
 - **bool begin(uint8_t sda, uint8_t scl)** idem, ESP32 ESP8266 only. 
-- **void reset()** resets the library to start up conditions.
+- **void configure()** configures the library to start up conditions.
 - **bool isConnected()** checks if address is available on I2C bus.
 - **uint8_t channelCount()** returns the number of channels = 8.
 
 
 ### LedDriverMode
+
+Configure LED behaviour.
 
 - **uint8_t setLedDriverMode(uint8_t channel, uint8_t mode)** mode is 0..3 See datasheet for full details.
 - **uint8_t getLedDriverMode(uint8_t channel)** returns the current mode of the channel.
@@ -54,6 +56,9 @@ This is ideal to trigger e.g. multiple LEDs (servo's) at same time.
 
 ### Read and write
 
+Read and write individual values to LED channels. 
+Requires LEDs' DriverMode of the specific channels to be in PWM mode.
+
 - **uint8_t write1(uint8_t channel, uint8_t value)** writes a single 8 bit PWM value.
 - **uint8_t write3(uint8_t channel, uint8_t R, uint8_t G, uint8_t B)** 
 writes three consecutive PWM registers.
@@ -66,8 +71,10 @@ May return **PCA9634_ERR_WRITE** if array has too many elements
 
 ### Mode registers
 
+Used to configure the PCA963x general behaviour.
+
 - **uint8_t writeMode(uint8_t reg, uint8_t value)** configuration of one of the two configuration registers.
-check datasheet for details.
+Check datasheet for details.
 - **uint8_t readMode(uint8_t reg)** reads back the configured mode, 
 useful to add or remove a single flag (bit masking).
 - **uint8_t setMode1(uint8_t value)** convenience wrapper.
@@ -80,21 +87,21 @@ useful to add or remove a single flag (bit masking).
 
 (added 0.1.2)
 
-| Name                    | Value | Description                     |
-|:------------------------|:-----:|:--------------------------------|
-| PCA9634_MODE1_AUTOINCR2 | 0x80  | RO, 0 = disable  1 = enable     |
-| PCA9634_MODE1_AUTOINCR1 | 0x40  | RO, bit1                        |
-| PCA9634_MODE1_AUTOINCR0 | 0x20  | RO  bit0                        |
-| PCA9634_MODE1_SLEEP     | 0x10  | 0 = normal       1 = sleep      |
-| PCA9634_MODE1_SUB1      | 0x08  | 0 = disable      1 = enable     |
-| PCA9634_MODE1_SUB2      | 0x04  | 0 = disable      1 = enable     |
-| PCA9634_MODE1_SUB3      | 0x02  | 0 = disable      1 = enable     |
-| PCA9634_MODE1_ALLCALL   | 0x01  | 0 = disable      1 = enable     |
-|                         |       |                                 |
-| PCA9634_MODE2_BLINK     | 0x20  | 0 = dim          1 = blink      |
-| PCA9634_MODE2_INVERT    | 0x10  | 0 = normal       1 = inverted   |
-| PCA9634_MODE2_STOP      | 0x08  | 0 = on STOP      1 = on ACK     |
-| PCA9634_MODE2_TOTEMPOLE | 0x04  | 0 = open drain   1 = totem-pole |
+| Name                    | Value | Description                        |
+|:------------------------|:-----:|:-----------------------------------|
+| PCA9634_MODE1_AUTOINCR2 | 0x80  | Read Only, 0 = disable  1 = enable |
+| PCA9634_MODE1_AUTOINCR1 | 0x40  | Read Only, bit1                    |
+| PCA9634_MODE1_AUTOINCR0 | 0x20  | Read Only, bit0                    |
+| PCA9634_MODE1_SLEEP     | 0x10  | 0 = normal        1 = sleep        |
+| PCA9634_MODE1_SUB1      | 0x08  | 0 = disable       1 = enable       |
+| PCA9634_MODE1_SUB2      | 0x04  | 0 = disable       1 = enable       |
+| PCA9634_MODE1_SUB3      | 0x02  | 0 = disable       1 = enable       |
+| PCA9634_MODE1_ALLCALL   | 0x01  | 0 = disable       1 = enable       |
+|                         |       |                                    |
+| PCA9634_MODE2_BLINK     | 0x20  | 0 = dim           1 = blink        |
+| PCA9634_MODE2_INVERT    | 0x10  | 0 = normal        1 = inverted     |
+| PCA9634_MODE2_STOP      | 0x08  | 0 = on STOP       1 = on ACK       |
+| PCA9634_MODE2_TOTEMPOLE | 0x04  | 0 = open drain    1 = totem-pole   |
 
 
 These constants makes it easier to set modes without using a non descriptive
@@ -117,10 +124,14 @@ ledArray.setMode2(PCA9634_MODE2_BLINK | PCA9634_MODE2_INVERT | PCA9634_MODE2_TOT
 
 ### Group PWM and frequency
 
+Check datasheet for the details.
+
 - **void setGroupPWM(uint8_t value)** sets all channels that are part of the PWM group to value.
 - **uint8_t getGroupPWM()** get the current PWM setting of the group.
-- **void setGroupFREQ(value)** see datasheet for details. 
-- **uint8_t getGroupFREQ()** returns the freq of the PWM group.
+- **void setGroupFREQ(uint8_t value)** is used for blinking the group of configured LED. 
+Value goes from 0 to 255 with each step representing an increase of approx. 41 ms. 
+So 0x00 results in 41 ms blinking period (on AND off) and 0xFF in approx. 10.5 s.
+- **uint8_t getGroupFREQ()** returns the set frequency of the PWM group.
 
 
 ### Miscellaneous
@@ -144,6 +155,8 @@ Please read the datasheet to understand the working of **SUB CALL** and **ALL CA
 
 Since version 0.2.0 there is (experimental) support for the **SUB CALL** and **ALL CALL** functions.
 It needs more testing and if there are issues, please report.
+
+AllCall is automatically activated for each device on startup.
 
 #### Description
 

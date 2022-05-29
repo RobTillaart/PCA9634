@@ -71,7 +71,7 @@ public:
   bool     begin(uint8_t sda, uint8_t scl);
 #endif
   bool     begin();
-  void     initial();
+  void     configure();
   bool     isConnected();
 
   uint8_t  channelCount() { return _channelCount; };
