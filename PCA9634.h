@@ -57,9 +57,8 @@
 #define PCA9634_MODE2_STOP          0x08  // 0 = on STOP      1 = on ACK
 #define PCA9634_MODE2_TOTEMPOLE     0x04  // 0 = open drain   1 = totem-pole
 
-
-// NOT IMPLEMENTED YET
-#define PCA9634_SUBADR(x)           (0x0E +(x))  // x = 1..3
+//  (since 0.2.0)
+#define PCA9634_SUBADR(x)           (0x0D +(x))  // x = 1..3
 #define PCA9634_ALLCALLADR          0x11
 
 
@@ -109,16 +108,22 @@ public:
 
   int      lastError();
 
-  //  SUB CALL SUPPORT  (since 0.2.0)
+  /////////////////////////////////////////////////////
+  //
+  // SUB CALL  -  ALL CALL  (since 0.2.0)
+  //
   //  nr = { 1, 2, 3 }
-  void enableSubCall(uint8_t nr);
-  void disableSubCall(uint8_t nr);
-  bool isEnabledSubCall(uint8_t nr);
+  bool    enableSubCall(uint8_t nr);
+  bool    disableSubCall(uint8_t nr);
+  bool    isEnabledSubCall(uint8_t nr);
+  bool    setSubCallAddress(uint8_t nr, uint8_t address);
+  uint8_t getSubCallAddress(uint8_t nr);
 
-  //  ALL CALL SUPPORT  (since 0.2.0)
-  void enableAllCall();
-  void disableAllCall();
-  bool isEnabledAllCall();
+  bool    enableAllCall();
+  bool    disableAllCall();
+  bool    isEnabledAllCall();
+  bool    setAllCallAddress(uint8_t address);
+  uint8_t getAllCallAddress();
 
 
 private:

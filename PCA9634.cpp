@@ -195,9 +195,9 @@ int PCA9634::lastError()
 //
 // SUB CALL  -   ALL CALL
 //
-void PCA9634::enableSubCall(uint8_t nr)
+bool PCA9634::enableSubCall(uint8_t nr)
 {
-  if ((nr == 0) || (nr > 3)) return;
+  if ((nr == 0) || (nr > 3)) return false;
   uint8_t prev = getMode1();
   uint8_t reg = prev;
   if (nr == 1)      reg |= PCA9634_MODE1_SUB1;
@@ -205,12 +205,13 @@ void PCA9634::enableSubCall(uint8_t nr)
   else              reg |= PCA9634_MODE1_SUB3;
   //  only update if changed.
   if (reg != prev) setMode1(reg);
+  return true;
 }
 
 
-void PCA9634::disableSubCall(uint8_t nr)
+bool PCA9634::disableSubCall(uint8_t nr)
 {
-  if ((nr == 0) || (nr > 3)) return;
+  if ((nr == 0) || (nr > 3)) return false;
   uint8_t prev = getMode1();
   uint8_t reg = prev;
   if (nr == 1)      reg &= ~PCA9634_MODE1_SUB1;
@@ -218,6 +219,7 @@ void PCA9634::disableSubCall(uint8_t nr)
   else              reg &= ~PCA9634_MODE1_SUB3;
   //  only update if changed.
   if (reg != prev) setMode1(reg);
+  return true;
 }
 
 
@@ -227,25 +229,43 @@ bool PCA9634::isEnabledSubCall(uint8_t nr)
   uint8_t reg = getMode1();
   if (nr == 1) return (reg & PCA9634_MODE1_SUB1) > 0;
   if (nr == 2) return (reg & PCA9634_MODE1_SUB2) > 0;
-               return (reg & PCA9634_MODE1_SUB3) > 0;
+  return (reg & PCA9634_MODE1_SUB3) > 0;
 }
 
 
-void PCA9634::enableAllCall()
+bool PCA9634::setSubCallAddress(uint8_t nr, uint8_t address)
+{
+  if ((nr == 0) || (nr > 3)) return false;
+  writeReg(PCA9634_SUBADR(nr), address);
+  return true;
+}
+
+
+uint8_t PCA9634::getSubCallAddress(uint8_t nr)
+{
+  if ((nr == 0) || (nr > 3)) return 0;
+  uint8_t address = readReg(PCA9634_SUBADR(nr));
+  return address;
+}
+
+
+bool PCA9634::enableAllCall()
 {
   uint8_t prev = getMode1();
   uint8_t reg = prev | PCA9634_MODE1_ALLCALL;
   //  only update if changed.
   if (reg != prev) setMode1(reg);
+  return true;
 }
 
 
-void PCA9634::disableAllCall()
+bool PCA9634::disableAllCall()
 {
   uint8_t prev = getMode1();
   uint8_t reg = prev & ~PCA9634_MODE1_ALLCALL;
   //  only update if changed.
   if (reg != prev) setMode1(reg);
+  return true;
 }
 
 
@@ -254,6 +274,21 @@ bool PCA9634::isEnabledAllCall()
   uint8_t reg = getMode1();
   return reg & PCA9634_MODE1_ALLCALL;
 }
+
+
+bool PCA9634::setAllCallAddress(uint8_t address)
+{
+  writeReg(PCA9634_ALLCALLADR, address);
+  return true;
+}
+
+
+uint8_t PCA9634::getAllCallAddress()
+{
+  uint8_t address = readReg(PCA9634_ALLCALLADR);
+  return address;
+}
+
 
 
 /////////////////////////////////////////////////////

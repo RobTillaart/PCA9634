@@ -30,8 +30,7 @@ library is a 8 channel derived variation of the PCA9635 class.
 - **PCA9634(uint8_t deviceAddress, TwoWire \*wire = &Wire)** Constructor with I2C device address, 
 and optional the Wire interface as parameter.
 - **bool begin()** initializes the library after startup. Mandatory.
-- **bool begin(uint8_t sda, uint8_t scl)** idem, ESP32 ESP8266 only. Library does not support 
-multiple Wire instances (yet).
+- **bool begin(uint8_t sda, uint8_t scl)** idem, ESP32 ESP8266 only. 
 - **void reset()** resets the library to start up conditions.
 - **bool isConnected()** checks if address is available on I2C bus.
 - **uint8_t channelCount()** returns the number of channels = 8.
@@ -56,9 +55,11 @@ This is ideal to trigger e.g. multiple LEDs (servo's) at same time.
 ### Read and write
 
 - **uint8_t write1(uint8_t channel, uint8_t value)** writes a single 8 bit PWM value.
-- **uint8_t write3(uint8_t channel, uint8_t R, uint8_t G, uint8_t B)** writes three consecutive PWM registers.
+- **uint8_t write3(uint8_t channel, uint8_t R, uint8_t G, uint8_t B)** 
+writes three consecutive PWM registers.
 typical use is to write R, G, B values for a full colour LED.
-- **uint8_t writeN(uint8_t channel, uint8_t \* array, uint8_t count)** write count consecutive PWM registers. 
+- **uint8_t writeN(uint8_t channel, uint8_t \* array, uint8_t count)** 
+write count consecutive PWM registers. 
 May return **PCA9634_ERR_WRITE** if array has too many elements 
 (including channel as offset).
 
@@ -69,10 +70,10 @@ May return **PCA9634_ERR_WRITE** if array has too many elements
 check datasheet for details.
 - **uint8_t readMode(uint8_t reg)** reads back the configured mode, 
 useful to add or remove a single flag (bit masking).
-- **uint8_t  setMode1(uint8_t value)** convenience wrapper.
-- **uint8_t  setMode2(uint8_t value)** convenience wrapper.
-- **uint8_t  getMode1()** convenience wrapper.
-- **uint8_t  getMode2()** convenience wrapper.
+- **uint8_t setMode1(uint8_t value)** convenience wrapper.
+- **uint8_t setMode2(uint8_t value)** convenience wrapper.
+- **uint8_t getMode1()** convenience wrapper.
+- **uint8_t getMode2()** convenience wrapper.
 
 
 #### Constants for mode registers
@@ -97,7 +98,7 @@ useful to add or remove a single flag (bit masking).
 
 
 These constants makes it easier to set modes without using a non descriptive
-bitmask. The constants can be merged by OR-ing them together, see snippet:
+bit mask. The constants can be merged by OR-ing them together, see snippet:
 
 ```cpp
 ledArray.writeMode(PCA9634_MODE2, 0b00110100);
@@ -137,6 +138,40 @@ ledArray.setMode2(PCA9634_MODE2_BLINK | PCA9634_MODE2_INVERT | PCA9634_MODE2_TOT
 | PCA9634_ERR_I2C   | 0xFA  | I2C communication error
 
 
+### SUB CALL and ALL CALL
+
+Please read the datasheet to understand the working of **SUB CALL** and **ALL CALL**.
+
+Since version 0.2.0 there is (experimental) support for the **SUB CALL** and **ALL CALL** functions.
+It needs more testing and if there are issues, please report.
+
+#### Description
+
+**SUB CALL** allows one to make groups of PCA9634 devices and control them on group level.
+The number of groups one can make depends on free I2C addresses on one I2C bus.
+Using multiple I2C buses or multiplexers will even increase the possible number. 
+Every PCA9634 device can be member of up to three of these groups. To become member one needs to set the **setSubCallAddress(nr, address)** and enable it with **enableSubCall(nr)**.
+
+In the same way one can become member of an **ALL CALL** group.
+Typically there is only one such group but one can configure more of them by applying different addresses.
+
+#### Interface
+
+The functions to enable all/sub-addresses are straightforward:
+
+- **bool enableSubCall(uint8_t nr)** nr = 1,2,3
+- **bool disableSubCall(uint8_t nr)** nr = 1,2,3
+- **bool isEnabledSubCall(uint8_t nr)** nr = 1,2,3
+- **bool setSubCallAddress(uint8_t nr, uint8_t address)**
+- **uint8_t getSubCallAddress(uint8_t nr)**
+
+- **bool enableAllCall()**
+- **bool disableAllCall()**
+- **bool isEnabledAllCall()**
+- **bool setAllCallAddress(uint8_t address)**
+- **uint8_t getAllCallAddress()**
+
+
 ## Operation
 
 See examples
@@ -146,7 +181,9 @@ See examples
 
 - improve documentation
 - unit tests
+  - SUB CALL if possible?
+  - ALL CALL if possible?
 - add examples
-- follow PCA9635 developments
+- sync with PCA9635 developments
 - merge with PCA9635 and a PCA963X base class if possible
 
