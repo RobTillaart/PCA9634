@@ -3,7 +3,7 @@
 //    FILE: PCA9634.h
 //  AUTHOR: Rob Tillaart
 //    DATE: 03-01-2022
-// VERSION: 0.1.2
+// VERSION: 0.2.0
 // PURPOSE: Arduino library for PCA9634 I2C LED driver, 8 channel
 //     URL: https://github.com/RobTillaart/PCA9634
 
@@ -12,7 +12,7 @@
 #include "Wire.h"
 
 
-#define PCA9634_LIB_VERSION         (F("0.1.2"))
+#define PCA9634_LIB_VERSION         (F("0.2.0"))
 
 #define PCA9634_MODE1               0x00
 #define PCA9634_MODE2               0x01
@@ -72,7 +72,7 @@ public:
   bool     begin(uint8_t sda, uint8_t scl);
 #endif
   bool     begin();
-  void     reset();
+  void     initial();
   bool     isConnected();
 
   uint8_t  channelCount() { return _channelCount; };
@@ -82,10 +82,10 @@ public:
 
   // single PWM setting
   uint8_t  write1(uint8_t channel, uint8_t value);
-  
+
   // RGB setting, write three consecutive PWM registers
   uint8_t  write3(uint8_t channel, uint8_t R, uint8_t G, uint8_t B);
-  
+
   // generic worker, write N consecutive PWM registers
   uint8_t  writeN(uint8_t channel, uint8_t* arr, uint8_t count);
 
@@ -108,6 +108,18 @@ public:
   uint8_t  getGroupFREQ() { return readReg(PCA9634_GRPFREQ); }
 
   int      lastError();
+
+  //  SUB CALL SUPPORT  (since 0.2.0)
+  //  nr = { 1, 2, 3 }
+  void enableSubCall(uint8_t nr);
+  void disableSubCall(uint8_t nr);
+  bool isEnabledSubCall(uint8_t nr);
+
+  //  ALL CALL SUPPORT  (since 0.2.0)
+  void enableAllCall();
+  void disableAllCall();
+  bool isEnabledAllCall();
+
 
 private:
   // DIRECT CONTROL

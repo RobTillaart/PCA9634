@@ -2,7 +2,7 @@
 //    FILE: PCA9634.cpp
 //  AUTHOR: Rob Tillaart
 //    DATE: 03-01-2022
-// VERSION: 0.1.2
+// VERSION: 0.2.0
 // PURPOSE: Arduino library for PCA9634 I2C LED driver
 //     URL: https://github.com/RobTillaart/PCA9634
 //
@@ -10,6 +10,8 @@
 //  0.1.0   2022-01-03  initial version -- based upon 0.3.2 PCA9635
 //  0.1.1   2022-01-04  minor fixes 
 //  0.1.2   2022-04-13  issue #7 add constants and functions for mode registers.
+//  0.2.0   2022-05-29  rename reset() to initial()
+//                      add SUB CALL and ALL CALL functions.
 
 
 #include "PCA9634.h"
@@ -38,7 +40,7 @@ bool PCA9634::begin(uint8_t sda, uint8_t scl)
     _wire->begin();
   }
   if (! isConnected()) return false;
-  reset();
+  initial();
   return true;
 }
 #endif
@@ -48,7 +50,7 @@ bool PCA9634::begin()
 {
   _wire->begin();
   if (! isConnected()) return false;
-  reset();
+  initial();
   return true;
 }
 
@@ -61,7 +63,7 @@ bool PCA9634::isConnected()
 }
 
 
-void PCA9634::reset()
+void PCA9634::initial()
 {
   _data = 0;
   _error = 0;
@@ -179,12 +181,78 @@ uint8_t PCA9634::getLedDriverMode(uint8_t channel)
 }
 
 
-// note error flag is reset after read!
+// note error flag is set to PCA9634_OK after read!
 int PCA9634::lastError()
 {
   int e = _error;
-  _error = 0;
+  _error = PCA9634_OK;
   return e;
+}
+
+
+
+/////////////////////////////////////////////////////
+//
+// SUB CALL  -   ALL CALL
+//
+void PCA9634::enableSubCall(uint8_t nr)
+{
+  if ((nr == 0) || (nr > 3)) return;
+  uint8_t prev = getMode1();
+  uint8_t reg = prev;
+  if (nr == 1)      reg |= PCA9634_MODE1_SUB1;
+  else if (nr == 2) reg |= PCA9634_MODE1_SUB2;
+  else              reg |= PCA9634_MODE1_SUB3;
+  //  only update if changed.
+  if (reg != prev) setMode1(reg);
+}
+
+
+void PCA9634::disableSubCall(uint8_t nr)
+{
+  if ((nr == 0) || (nr > 3)) return;
+  uint8_t prev = getMode1();
+  uint8_t reg = prev;
+  if (nr == 1)      reg &= ~PCA9634_MODE1_SUB1;
+  else if (nr == 2) reg &= ~PCA9634_MODE1_SUB2;
+  else              reg &= ~PCA9634_MODE1_SUB3;
+  //  only update if changed.
+  if (reg != prev) setMode1(reg);
+}
+
+
+bool PCA9634::isEnabledSubCall(uint8_t nr)
+{
+  if ((nr == 0) || (nr > 3)) return false;
+  uint8_t reg = getMode1();
+  if (nr == 1) return (reg & PCA9634_MODE1_SUB1) > 0;
+  if (nr == 2) return (reg & PCA9634_MODE1_SUB2) > 0;
+               return (reg & PCA9634_MODE1_SUB3) > 0;
+}
+
+
+void PCA9634::enableAllCall()
+{
+  uint8_t prev = getMode1();
+  uint8_t reg = prev | PCA9634_MODE1_ALLCALL;
+  //  only update if changed.
+  if (reg != prev) setMode1(reg);
+}
+
+
+void PCA9634::disableAllCall()
+{
+  uint8_t prev = getMode1();
+  uint8_t reg = prev & ~PCA9634_MODE1_ALLCALL;
+  //  only update if changed.
+  if (reg != prev) setMode1(reg);
+}
+
+
+bool PCA9634::isEnabledAllCall()
+{
+  uint8_t reg = getMode1();
+  return reg & PCA9634_MODE1_ALLCALL;
 }
 
 

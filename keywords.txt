@@ -31,6 +31,13 @@ getGroupFREQ	KEYWORD2
 
 lastError	KEYWORD2
 
+enableSubCall	KEYWORD2
+disableSubCall	KEYWORD2
+isEnabledSubCall	KEYWORD2
+enableAllCall	KEYWORD2
+disableAllCall	KEYWORD2
+isEnabledAllCall	KEYWORD2
+
 
 # Constants (	LITERAL1)
 PCA9634_LIB_VERSION	LITERAL1
