@@ -10,8 +10,12 @@
 //  0.1.0   2022-01-03  initial version -- based upon 0.3.2 PCA9635
 //  0.1.1   2022-01-04  minor fixes 
 //  0.1.2   2022-04-13  issue #7 add constants and functions for mode registers.
+//
 //  0.2.0   2022-05-29  rename reset() to configure()
+//                      add mode1 and mode2 parameter to configure.
 //                      add SUB CALL and ALL CALL functions.
+//                      update documentation.
+
 
 
 #include "PCA9634.h"

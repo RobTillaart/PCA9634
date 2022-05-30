@@ -31,7 +31,10 @@ library is a 8 channel derived variation of the PCA9635 class.
 and optional the Wire interface as parameter.
 - **bool begin()** initializes the library after startup. Mandatory.
 - **bool begin(uint8_t sda, uint8_t scl)** idem, ESP32 ESP8266 only. 
-- **void configure()** configures the library to start up conditions.
+- **void configure(uint8_t mode1_mask = PCA9634_MODE1_ALLCALL, uint8_t mode2_mask = PCA9634_MODE2_NONE)** 
+configures the library, optionally setting the MODE1 and MODE2 configuration registers. 
+See PCA9634.h and datasheet for settings possible.
+**configure()** is typically used at startup.
 - **bool isConnected()** checks if address is available on I2C bus.
 - **uint8_t channelCount()** returns the number of channels = 8.
 
@@ -163,7 +166,9 @@ AllCall is automatically activated for each device on startup.
 **SUB CALL** allows one to make groups of PCA9634 devices and control them on group level.
 The number of groups one can make depends on free I2C addresses on one I2C bus.
 Using multiple I2C buses or multiplexers will even increase the possible number. 
-Every PCA9634 device can be member of up to three of these groups. To become member one needs to set the **setSubCallAddress(nr, address)** and enable it with **enableSubCall(nr)**.
+Every PCA9634 device can be member of up to three of these groups. 
+To become member one needs to set the **setSubCallAddress(nr, address)** and enable 
+it with **enableSubCall(nr)**.
 
 In the same way one can become member of an **ALL CALL** group.
 Typically there is only one such group but one can configure more of them by applying different addresses.
