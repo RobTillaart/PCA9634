@@ -76,8 +76,7 @@ public:
 #endif
   bool     begin(uint8_t mode1_mask = PCA9634_MODE1_ALLCALL, 
                  uint8_t mode2_mask = PCA9634_MODE2_NONE);
-  void     configure(uint8_t mode1_mask = PCA9634_MODE1_ALLCALL, 
-                     uint8_t mode2_mask = PCA9634_MODE2_NONE);
+  void     configure(uint8_t mode1_mask, uint8_t mode2_mask);
   bool     isConnected();
 
   uint8_t  channelCount() { return _channelCount; };
@@ -119,17 +118,17 @@ public:
   // SUB CALL  -  ALL CALL  (since 0.2.0)
   //
   //  nr = { 1, 2, 3 }
-  bool    enableSubCall(uint8_t nr);
-  bool    disableSubCall(uint8_t nr);
-  bool    isEnabledSubCall(uint8_t nr);
-  bool    setSubCallAddress(uint8_t nr, uint8_t address);
-  uint8_t getSubCallAddress(uint8_t nr);
+  bool     enableSubCall(uint8_t nr);
+  bool     disableSubCall(uint8_t nr);
+  bool     isEnabledSubCall(uint8_t nr);
+  bool     setSubCallAddress(uint8_t nr, uint8_t address);
+  uint8_t  getSubCallAddress(uint8_t nr);
 
-  bool    enableAllCall();
-  bool    disableAllCall();
-  bool    isEnabledAllCall();
-  bool    setAllCallAddress(uint8_t address);
-  uint8_t getAllCallAddress();
+  bool     enableAllCall();
+  bool     disableAllCall();
+  bool     isEnabledAllCall();
+  bool     setAllCallAddress(uint8_t address);
+  uint8_t  getAllCallAddress();
 
 
 private:

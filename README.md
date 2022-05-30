@@ -34,8 +34,8 @@ initializes the library after startup. Optionally setting the MODE1 and MODE2 co
 See PCA9634.h and datasheet for settings possible.
 - **bool begin(uint8_t sda, uint8_t scl, uint8_t mode1_mask = PCA9634_MODE1_ALLCALL, uint8_t mode2_mask = PCA9634_MODE2_NONE)** 
 idem, ESP32 ESP8266 only. 
-- **void configure(uint8_t mode1_mask = PCA9634_MODE1_ALLCALL, uint8_t mode2_mask = PCA9634_MODE2_NONE)** 
-To configure the library after startup, optionally setting the MODE1 and MODE2 configuration registers. 
+- **void configure(uint8_t mode1_mask, uint8_t mode2_mask)** 
+To configure the library after startup one can set the MODE1 and MODE2 configuration registers. 
 See PCA9634.h and datasheet for settings possible. 
 - **bool isConnected()** checks if address is available on I2C bus.
 - **uint8_t channelCount()** returns the number of channels = 8.
