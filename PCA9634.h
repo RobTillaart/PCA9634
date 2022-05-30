@@ -42,20 +42,22 @@
 
 
 // Configuration bits MODE1 register
-#define PCA9634_MODE1_AUTOINCR2     0x80  // RO, 0 = disable  1 = enable
-#define PCA9634_MODE1_AUTOINCR1     0x40  // RO, bit1
-#define PCA9634_MODE1_AUTOINCR0     0x20  // RO  bit0
+#define PCA9634_MODE1_AUTOINCR2     0x80  // ReadOnly,  0 = disable  1 = enable
+#define PCA9634_MODE1_AUTOINCR1     0x40  // ReadOnly,  bit1
+#define PCA9634_MODE1_AUTOINCR0     0x20  // ReadOnly,  bit0
 #define PCA9634_MODE1_SLEEP         0x10  // 0 = normal       1 = sleep
 #define PCA9634_MODE1_SUB1          0x08  // 0 = disable      1 = enable
 #define PCA9634_MODE1_SUB2          0x04  // 0 = disable      1 = enable
 #define PCA9634_MODE1_SUB3          0x02  // 0 = disable      1 = enable
 #define PCA9634_MODE1_ALLCALL       0x01  // 0 = disable      1 = enable
+#define PCA9634_MODE1_NONE          0x00
 
 // Configuration bits MODE2 register
 #define PCA9634_MODE2_BLINK         0x20  // 0 = dim          1 = blink
 #define PCA9634_MODE2_INVERT        0x10  // 0 = normal       1 = inverted
 #define PCA9634_MODE2_STOP          0x08  // 0 = on STOP      1 = on ACK
 #define PCA9634_MODE2_TOTEMPOLE     0x04  // 0 = open drain   1 = totem-pole
+#define PCA9634_MODE2_NONE          0x00
 
 //  (since 0.2.0)
 #define PCA9634_SUBADR(x)           (0x0D +(x))  // x = 1..3
@@ -71,7 +73,8 @@ public:
   bool     begin(uint8_t sda, uint8_t scl);
 #endif
   bool     begin();
-  void     configure();
+  void     configure(uint8_t mode1_mask = PCA9634_MODE1_ALLCALL, 
+                     uint8_t mode2_mask = PCA9634_MODE2_NONE);
   bool     isConnected();
 
   uint8_t  channelCount() { return _channelCount; };
@@ -99,12 +102,12 @@ public:
 
 
   // TODO PWM also in %% ?
-  void     setGroupPWM(uint8_t value) { writeReg(PCA9634_GRPPWM, value); }
-  uint8_t  getGroupPWM() { return readReg(PCA9634_GRPPWM); }
+  void     setGroupPWM(uint8_t value) { writeReg(PCA9634_GRPPWM, value); };
+  uint8_t  getGroupPWM() { return readReg(PCA9634_GRPPWM); };
 
   // TODO set time in milliseconds and round to nearest value?
-  void     setGroupFREQ(uint8_t value) { writeReg(PCA9634_GRPFREQ, value); }
-  uint8_t  getGroupFREQ() { return readReg(PCA9634_GRPFREQ); }
+  void     setGroupFREQ(uint8_t value) { writeReg(PCA9634_GRPFREQ, value); };
+  uint8_t  getGroupFREQ() { return readReg(PCA9634_GRPFREQ); };
 
   int      lastError();
 

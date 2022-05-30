@@ -63,13 +63,13 @@ bool PCA9634::isConnected()
 }
 
 
-void PCA9634::configure()
+void PCA9634::configure(uint8_t mode1_mask, uint8_t mode2_mask)
 {
   _data = 0;
   _error = 0;
 
-  uint8_t mode1_mask = PCA9634_MODE1_AUTOINCR2 | PCA9634_MODE1_ALLCALL;
-  writeReg(PCA9634_MODE1, mode1_mask);  //  AUTOINCR | NOSLEEP | ALLADRR  0x81
+  setMode1(mode1_mask);
+  setMode2(mode2_mask);
 }
 
 
