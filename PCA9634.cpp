@@ -36,7 +36,9 @@ PCA9634::PCA9634(const uint8_t deviceAddress, TwoWire *wire)
 
 
 #if defined (ESP8266) || defined(ESP32)
-bool PCA9634::begin(uint8_t sda, uint8_t scl)
+bool PCA9634::begin(uint8_t sda, uint8_t scl,
+                    uint8_t mode1_mask = PCA9634_MODE1_ALLCALL, 
+                    uint8_t mode2_mask = PCA9634_MODE2_NONE)
 {
   _wire = &Wire;
   if ((sda < 255) && (scl < 255))
@@ -46,17 +48,18 @@ bool PCA9634::begin(uint8_t sda, uint8_t scl)
     _wire->begin();
   }
   if (! isConnected()) return false;
-  configure();
+  configure(mode1_mask, mode2_mask);
   return true;
 }
 #endif
 
 
-bool PCA9634::begin()
+bool PCA9634::begin(uint8_t mode1_mask = PCA9634_MODE1_ALLCALL, 
+                    uint8_t mode2_mask = PCA9634_MODE2_NONE)
 {
   _wire->begin();
   if (! isConnected()) return false;
-  configure();
+  configure(mode1_mask, mode2_mask);
   return true;
 }
 
