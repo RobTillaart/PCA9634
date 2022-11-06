@@ -124,6 +124,34 @@ uint8_t PCA9634::writeN(uint8_t channel, uint8_t* arr, uint8_t count)
 }
 
 
+uint8_t PCA9634::writeN_noStop(uint8_t channel, uint8_t* arr, uint8_t count)
+{
+  if (channel + count > _channelCount)
+  {
+    _error = PCA9634_ERR_WRITE;
+    return PCA9634_ERROR;
+  }
+  uint8_t base = PCA9634_PWM(channel);
+  _wire->beginTransmission(_address);
+  _wire->write(base);
+  for(uint8_t i = 0; i < count; i++)
+  {
+    _wire->write(arr[i]);
+  }
+}
+
+uint8_t PCA9634::writeStop()
+{
+  _error = _wire->endTransmission();
+  if (_error != 0)
+  {
+    _error = PCA9634_ERR_I2C;
+    return PCA9634_ERROR;
+  }
+  return PCA9634_OK;
+}
+
+
 uint8_t PCA9634::writeMode(uint8_t reg, uint8_t value)
 {
   if ((reg == PCA9634_MODE1) || (reg == PCA9634_MODE2))
