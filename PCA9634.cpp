@@ -138,6 +138,7 @@ uint8_t PCA9634::writeN_noStop(uint8_t channel, uint8_t* arr, uint8_t count)
   {
     _wire->write(arr[i]);
   }
+  return PCA9634_OK;  // <-- I am not sure if a check for error should be included here. I just added "return PCA9634_OK;", because my compiler told me that I need an uint8_t to return.
 }
 
 uint8_t PCA9634::writeStop()
