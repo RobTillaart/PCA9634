@@ -59,10 +59,15 @@
 #define PCA9634_MODE2_TOTEMPOLE     0x04  // 0 = open drain   1 = totem-pole
 #define PCA9634_MODE2_NONE          0x00
 
-//  (since 0.2.0)
+// Registers in which the ALLCALL and subaddresses are stored
 #define PCA9634_SUBADR(x)           (0x0D +(x))  // x = 1..3
 #define PCA9634_ALLCALLADR          0x11
 
+// Standard ALLCALL and subaddresses
+#define PCA9634_ALLCALL             0xE0
+#define PCA9634_SUB1                0xE2
+#define PCA9634_SUB2                0xE4
+#define PCA9634_SUB3                0xE8
 
 class PCA9634
 {
