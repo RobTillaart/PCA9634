@@ -98,6 +98,9 @@ public:
   // generic worker, write N consecutive PWM registers
   uint8_t  writeN(uint8_t channel, uint8_t* arr, uint8_t count);
 
+    // generic worker, write N consecutive PWM registers without Stop command
+  uint8_t  writeN_noStop(uint8_t channel, uint8_t* arr, uint8_t count);
+  
   // reg = 1, 2  check datasheet for values
   uint8_t  writeMode(uint8_t reg, uint8_t value);
   uint8_t  readMode(uint8_t reg);
