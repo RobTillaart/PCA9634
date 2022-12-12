@@ -63,11 +63,11 @@
 #define PCA9634_SUBADR(x)           (0x0D +(x))  // x = 1..3
 #define PCA9634_ALLCALLADR          0x11
 
-// Standard ALLCALL and subaddresses
-#define PCA9634_ALLCALL             0xE0
-#define PCA9634_SUB1                0xE2
-#define PCA9634_SUB2                0xE4
-#define PCA9634_SUB3                0xE8
+// Standard ALLCALL and subaddresses --> only work for write commands and NOT for read commands
+#define PCA9634_ALLCALL             0x70            // TDS of chip says 0xE0, however, in this library the LSB is added wuring the write command (0xE0 --> 0b11100000, 0x70 --> 0b1110000)
+#define PCA9634_SUB1                0x71            // see line above (0xE2 --> 0x71)
+#define PCA9634_SUB2                0x72            // see line above (0xE4 --> 0x72)
+#define PCA9634_SUB3                0x74            // see line above (0xE8 --> 0x74)
 
 class PCA9634
 {
