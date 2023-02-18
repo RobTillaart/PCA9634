@@ -224,6 +224,27 @@ please give feedback, so the documentation can be improved.
 For further details of the development, see - #10 (comment)
 
 
+### Synchronous multi-chip multi-LED operation
+
+In scenarios in which multiple LED states should be updated synchronously, the datasheet specifies a specific sequence. 
+Therefore, it is possible to update multiple LED registers in one or more PCA963x chips synchronously and have them 
+change their state at a final STOP command. For this only a few configurations are required.
+1. Make sure, the `PCA9634_MODE2_ACK` bit in the `MODE2` register is not set (it should be set to 0). 
+Therefore, the LED states will be updated at the STOP command of the I2C master and not during the ACK command of the PCA963x slave
+2. Do NOT use the `write1()`, `write3()` or `writeN()` functions for changing LED states. 
+These commands already include a STOP command.
+3. Use consecutive `writeN_noStop()` commands for multiple LEDs (can be on the same or different chips) and finish 
+the communication with the `writeStop()` command. The latter will send a STOP command and end the transmission. 
+If the PCA963x chips are configured to update their states on the STOP command, this will be the point in time, 
+when all previously send commands since the last STOP command will be executed.
+4. DISCLAIMER:
+  - This should not be used during the configuration of the chips as the library has not been tested for this. 
+  Furthermore, the configuration functions `writeMode` have STOP commands included  
+  - This function has not been tested for edge cases (what happened when no STOP command is send? 
+  In theory nothing should happen untill the next transmission with an STOP command has been send). 
+  Test functionality before implementation into your projects.
+
+
 ## Operation
 
 See examples
