@@ -2,7 +2,7 @@
 //    FILE: PCA9634.cpp
 //  AUTHOR: Rob Tillaart
 //    DATE: 2022-01-03
-// VERSION: 0.2.5
+// VERSION: 0.2.6
 // PURPOSE: Arduino library for PCA9634 I2C LED driver
 //     URL: https://github.com/RobTillaart/PCA9634
 
@@ -48,6 +48,22 @@ bool PCA9634::begin(uint8_t mode1_mask, uint8_t mode2_mask)
 }
 
 
+uint8_t PCA9634::configure(uint8_t mode1_mask, uint8_t mode2_mask)
+{
+  _data = 0;
+  _error = PCA9634_OK;
+
+  uint8_t r1 = setMode1(mode1_mask);
+  uint8_t r2 = setMode2(mode2_mask);
+
+  if ((r1 != PCA9634_OK) || (r2 != PCA9634_OK))
+  {
+    return PCA9634_ERROR;
+  }
+  return _error;
+}
+
+
 bool PCA9634::isConnected()
 {
   _wire->beginTransmission(_address);
@@ -56,13 +72,9 @@ bool PCA9634::isConnected()
 }
 
 
-void PCA9634::configure(uint8_t mode1_mask, uint8_t mode2_mask)
+uint8_t PCA9634::channelCount()
 {
-  _data = 0;
-  _error = 0;
-
-  setMode1(mode1_mask);
-  setMode2(mode2_mask);
+  return _channelCount;
 }
 
 
@@ -88,7 +100,7 @@ uint8_t PCA9634::writeN(uint8_t channel, uint8_t* arr, uint8_t count)
 {
   if (channel + count > _channelCount)
   {
-    _error = PCA9634_ERR_WRITE;
+    _error = PCA9634_ERR_CHAN;
     return PCA9634_ERROR;
   }
   uint8_t base = PCA9634_PWM(channel);
@@ -104,7 +116,8 @@ uint8_t PCA9634::writeN(uint8_t channel, uint8_t* arr, uint8_t count)
     _error = PCA9634_ERR_I2C;
     return PCA9634_ERROR;
   }
-  return PCA9634_OK;
+  _error = PCA9634_OK;
+  return _error;
 }
 
 
@@ -180,12 +193,13 @@ uint8_t PCA9634::setLedDriverMode(uint8_t channel, uint8_t mode)
 
   uint8_t reg = PCA9634_LEDOUT_BASE + (channel >> 2);
   //  some bit magic
-  uint8_t shift = (channel & 0x03) * 2;  //  0, 2, 4, 6 places
+  uint8_t shift = (channel & 0x03) * 2;  // 0,2,4,6 places
   uint8_t setmask = mode << shift;
   uint8_t clrmask = ~(0x03 << shift);
   uint8_t value = (readReg(reg) & clrmask) | setmask;
   writeReg(reg, value);
-  return PCA9634_OK;
+  _error = PCA9634_OK;
+  return _error;
 }
 
 
@@ -205,14 +219,16 @@ uint8_t PCA9634::getLedDriverMode(uint8_t channel)
 }
 
 
-//  note error flag is set to PCA9634_OK after read!
+/////////////////////////////////////////////////////
+//
+//  ERROR
+//
 int PCA9634::lastError()
 {
   int e = _error;
   _error = PCA9634_OK;
   return e;
 }
-
 
 
 /////////////////////////////////////////////////////
@@ -223,12 +239,16 @@ bool PCA9634::enableSubCall(uint8_t nr)
 {
   if ((nr == 0) || (nr > 3)) return false;
   uint8_t prev = getMode1();
-  uint8_t reg = prev;
-  if (nr == 1)      reg |= PCA9634_MODE1_SUB1;
-  else if (nr == 2) reg |= PCA9634_MODE1_SUB2;
-  else              reg |= PCA9634_MODE1_SUB3;
+  uint8_t mask = prev;
+  if (nr == 1)      mask |= PCA9634_MODE1_SUB1;
+  else if (nr == 2) mask |= PCA9634_MODE1_SUB2;
+  else              mask |= PCA9634_MODE1_SUB3;
   //  only update if changed.
-  if (reg != prev) setMode1(reg);
+  if (mask != prev)
+  {
+    setMode1(mask);
+    //  TODO error handling ...
+  }
   return true;
 }
 
@@ -237,12 +257,16 @@ bool PCA9634::disableSubCall(uint8_t nr)
 {
   if ((nr == 0) || (nr > 3)) return false;
   uint8_t prev = getMode1();
-  uint8_t reg = prev;
-  if (nr == 1)      reg &= ~PCA9634_MODE1_SUB1;
-  else if (nr == 2) reg &= ~PCA9634_MODE1_SUB2;
-  else              reg &= ~PCA9634_MODE1_SUB3;
+  uint8_t mask = prev;
+  if (nr == 1)      mask &= ~PCA9634_MODE1_SUB1;
+  else if (nr == 2) mask &= ~PCA9634_MODE1_SUB2;
+  else              mask &= ~PCA9634_MODE1_SUB3;
   //  only update if changed.
-  if (reg != prev) setMode1(reg);
+  if (mask != prev)
+  {
+    setMode1(mask);
+    //  TODO error handling ...
+  }
   return true;
 }
 
@@ -250,16 +274,20 @@ bool PCA9634::disableSubCall(uint8_t nr)
 bool PCA9634::isEnabledSubCall(uint8_t nr)
 {
   if ((nr == 0) || (nr > 3)) return false;
-  uint8_t reg = getMode1();
-  if (nr == 1) return (reg & PCA9634_MODE1_SUB1) > 0;
-  if (nr == 2) return (reg & PCA9634_MODE1_SUB2) > 0;
-  return (reg & PCA9634_MODE1_SUB3) > 0;
+  uint8_t mask = getMode1();
+  if (nr == 1) return (mask & PCA9634_MODE1_SUB1) > 0;
+  if (nr == 2) return (mask & PCA9634_MODE1_SUB2) > 0;
+  return (mask & PCA9634_MODE1_SUB3) > 0;
 }
 
 
 bool PCA9634::setSubCallAddress(uint8_t nr, uint8_t address)
 {
-  if ((nr == 0) || (nr > 3)) return false;
+  if ((nr == 0) || (nr > 3))
+  {
+    //  _error = ??  TODO
+    return false;
+  }
   writeReg(PCA9634_SUBADR(nr), address);
   return true;
 }
@@ -267,7 +295,11 @@ bool PCA9634::setSubCallAddress(uint8_t nr, uint8_t address)
 
 uint8_t PCA9634::getSubCallAddress(uint8_t nr)
 {
-  if ((nr == 0) || (nr > 3)) return 0;
+  if ((nr == 0) || (nr > 3))
+  {
+    //  _error = ??  TODO
+    return 0;
+  }
   uint8_t address = readReg(PCA9634_SUBADR(nr));
   return address;
 }
@@ -276,9 +308,13 @@ uint8_t PCA9634::getSubCallAddress(uint8_t nr)
 bool PCA9634::enableAllCall()
 {
   uint8_t prev = getMode1();
-  uint8_t reg = prev | PCA9634_MODE1_ALLCALL;
+  uint8_t mask = prev | PCA9634_MODE1_ALLCALL;
   //  only update if changed.
-  if (reg != prev) setMode1(reg);
+  if (mask != prev)
+  {
+    setMode1(mask);
+    //  error handling TODO
+  }
   return true;
 }
 
@@ -286,17 +322,21 @@ bool PCA9634::enableAllCall()
 bool PCA9634::disableAllCall()
 {
   uint8_t prev = getMode1();
-  uint8_t reg = prev & ~PCA9634_MODE1_ALLCALL;
+  uint8_t mask = prev & ~PCA9634_MODE1_ALLCALL;
   //  only update if changed.
-  if (reg != prev) setMode1(reg);
+  if (mask != prev)
+  {
+    setMode1(mask);
+    //  error handling TODO
+  }
   return true;
 }
 
 
 bool PCA9634::isEnabledAllCall()
 {
-  uint8_t reg = getMode1();
-  return reg & PCA9634_MODE1_ALLCALL;
+  uint8_t mask = getMode1();
+  return mask & PCA9634_MODE1_ALLCALL;
 }
 
 
@@ -311,6 +351,47 @@ uint8_t PCA9634::getAllCallAddress()
 {
   uint8_t address = readReg(PCA9634_ALLCALLADR);
   return address;
+}
+
+
+/////////////////////////////////////////////////////
+//
+//  OE - Output Enable control
+//
+//  active LOW see page 5 par 6.2 datasheet
+//
+bool PCA9634::setOutputEnablePin(uint8_t pin)
+{
+  _OutputEnablePin = pin;
+  if (_OutputEnablePin != 255)
+  {
+    pinMode(_OutputEnablePin, OUTPUT);
+    digitalWrite(_OutputEnablePin, HIGH);
+    return true;
+  }
+  //  must it be set to HIGH now?
+  return false;
+}
+
+
+bool PCA9634::setOutputEnable(bool on)
+{
+  if (_OutputEnablePin != 255)
+  {
+    digitalWrite(_OutputEnablePin, on ? LOW : HIGH);
+    return true;
+  }
+  return false;
+}
+
+
+uint8_t PCA9634::getOutputEnable()
+{
+  if (_OutputEnablePin != 255)
+  {
+    return digitalRead(_OutputEnablePin);
+  }
+  return HIGH;
 }
 
 
@@ -360,6 +441,7 @@ uint8_t PCA9634::readReg(uint8_t reg)
   _wire->beginTransmission(_address);
   _wire->write(reg);
   _error = _wire->endTransmission();
+
   if (_wire->requestFrom(_address, (uint8_t)1) != 1)
   {
     _error = PCA9634_ERROR;
