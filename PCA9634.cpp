@@ -20,7 +20,7 @@ PCA9634::PCA9634(const uint8_t deviceAddress, TwoWire *wire)
   _wire            = wire;
   _channelCount    = 8;
   _data            = 0;
-  _error           = PCA9635_OK;
+  _error           = PCA9634_OK;
   _OutputEnablePin = 255;
 }
 
