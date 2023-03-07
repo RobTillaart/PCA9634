@@ -139,7 +139,7 @@ uint8_t PCA9634::writeN_noStop(uint8_t channel, uint8_t* arr, uint8_t count)
     _wire->write(arr[i]);
   }
   //  OK so far
-  return PCA9634_OK;  
+  return PCA9634_OK;
 }
 
 
@@ -163,11 +163,11 @@ uint8_t PCA9634::writeMode(uint8_t reg, uint8_t value)
     return PCA9634_OK;
   }
   _error = PCA9634_ERR_REG;
-  return PCA9634_ERROR;
+  return _error;
 }
 
 
-//  Note 0xFF can also mean an error....  ==>  check error flag.
+//  Note 0xFF can also mean an error....  ==>  check error flag
 uint8_t PCA9634::readMode(uint8_t reg)
 {
   if ((reg == PCA9634_MODE1) || (reg == PCA9634_MODE2))
@@ -177,7 +177,7 @@ uint8_t PCA9634::readMode(uint8_t reg)
     return value;
   }
   _error = PCA9634_ERR_REG;
-  return PCA9634_ERROR;
+  return _error;
 }
 
 
@@ -186,12 +186,12 @@ uint8_t PCA9634::setLedDriverMode(uint8_t channel, uint8_t mode)
   if (channel >= _channelCount)
   {
     _error  = PCA9634_ERR_CHAN;
-    return PCA9634_ERROR;
+    return _error;
   }
   if (mode > 3)
   {
     _error  = PCA9634_ERR_MODE;
-    return PCA9634_ERROR;
+    return _error;
   }
 
   uint8_t reg = PCA9634_LEDOUT_BASE + (channel >> 2);
@@ -212,7 +212,7 @@ uint8_t PCA9634::getLedDriverMode(uint8_t channel)
   if (channel >= _channelCount)
   {
     _error  = PCA9634_ERR_CHAN;
-    return PCA9634_ERROR;
+    return _error;
   }
 
   uint8_t reg = PCA9634_LEDOUT_BASE + (channel >> 2);
