@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.2.6] - 2023-03-07
 - add OutputEnable control functions.
-- add example **PCA9635_OE_control.ino**
+- add example **PCA9634_OE_control.ino**
 - update unit test.
 - **configure()** now returns error state
+- moved code from .h to .cpp
 - update readme.md
 - minor edits
 

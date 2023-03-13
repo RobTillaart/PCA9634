@@ -181,6 +181,54 @@ uint8_t PCA9634::readMode(uint8_t reg)
 }
 
 
+uint8_t PCA9634::setMode1(uint8_t value)
+{
+  return writeMode(PCA9634_MODE1, value);
+}
+
+
+uint8_t PCA9634::setMode2(uint8_t value)
+{
+  return writeMode(PCA9634_MODE2, value);
+}
+
+
+uint8_t PCA9634::getMode1()
+{
+  return readMode(PCA9634_MODE1);
+}
+
+
+uint8_t PCA9634::getMode2()
+{
+  return readMode(PCA9634_MODE2);
+}
+
+
+void PCA9634::setGroupPWM(uint8_t value)
+{
+  writeReg(PCA9634_GRPPWM, value);
+}
+
+
+uint8_t PCA9634::getGroupPWM()
+{
+  return readReg(PCA9634_GRPPWM);
+}
+
+
+void PCA9634::setGroupFREQ(uint8_t value)
+{
+  writeReg(PCA9634_GRPFREQ, value);
+}
+
+
+uint8_t PCA9634::getGroupFREQ()
+{
+  return readReg(PCA9634_GRPFREQ);
+}
+
+
 uint8_t PCA9634::setLedDriverMode(uint8_t channel, uint8_t mode)
 {
   if (channel >= _channelCount)
