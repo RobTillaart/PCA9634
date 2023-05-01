@@ -213,12 +213,10 @@ public:
   //  0.2.2
   int I2C_SoftwareReset(uint8_t method);
   //  0.2.7
-  //  writing reg 14-17  LEDOUT
+  //  writing reg 12-13  LEDOUT
   //  reg   LEDS
   //  0     0..3
   //  1     4..7
-  //  2     8..11
-  //  3     12..15
   uint8_t  writeLedOut(uint8_t reg, uint8_t mask);
   uint8_t  readLedOut(uint8_t reg);
   uint8_t  setLedDriverMode(uint8_t mode);

@@ -232,7 +232,7 @@ The user has to set the power on value by means of a PULL UP / DOWN resistor.
 
 #### I2C Software reset
 
-The goal of this function is to reset ALL PCA9634 devices on the bus.
+The goal of this function is to reset ALL devices on the bus.
 When using the software reset, ALL devices attached to the bus are set to their hardware startup conditions.
 Generally, there are multiple definitions of software resets by the I2C inventor NXP.
 To accommodate this, two different modes for this function have been defined and tested (library version 0.2.2).
@@ -262,35 +262,34 @@ For further details of the development, see - #10 (comment)
 
 Experimental, needs testing, read datasheet 7.3.6
 
-The LEDOUT0 (14) .. LEDOUT3 (17) registers can be used to set the 
+The LEDOUT0 (12) and LEDOUT1 (13) registers can be used to set the 
 operational mode how each channel / LED is controlled. 
 The typical use case is to use PWM per channel
 but one can also set a channel / LED fully ON or OFF. 
-These functions are a fast way to set multiple LEDs ON/OFF.
+These functions are a fast way to switch multiple LEDs ON/OFF.
 
-The 4 registers LEDOUT0 .. LEDOUT3 each control 4 channels
+The two registers LEDOUT0 .. LEDOUT1 each control 4 channels
 
 |  register  |  channels  |  mask layout  |  notes  |
 |:----------:|:----------:|:-------------:|:-------:|
 |    0       |   0 ..  3  |   33221100    |  every channel has 2 bits.
 |    1       |   4 ..  7  |   idem        |
-|    2       |   8 .. 11  |   idem        |
-|    3       |  12 .. 15  |   idem        |
+
 
 - **uint8_t writeLedOut(uint8_t reg, uint8_t mask)**
-  - reg = 0..3, if larger than 3 an error is returned.
+  - reg = 0..1, if larger than 1 **PCA963X_ERROR** returned.
   - mask see below.
 - **uint8_t readLedOut(uint8_t reg)**
-  - reg = 0..3, if larger than 3 0x00 is returned.
+  - reg = 0..1, if larger than 1 **0x00** is returned. Use with care.
   - returns the register 
 
-To set channel 14 OFF and 15 ON simultaneously:
+To set channel 6 OFF and 7 ON simultaneously:
 
 ```cpp
-uint8_t mask = PCA.readLedOut(3);
-mask &= 0b00001111;  //  set OFF both 14 and 15
-mask |= 0b01000000;  //  set ON 15
-PCA.writeLedOut(3, mask);
+uint8_t mask = PCA.readLedOut(1);
+mask &= 0b00001111;  //  set OFF both 6 and 7
+mask |= 0b01000000;  //  set ON 7
+PCA.writeLedOut(1, mask);
 ```
 
 

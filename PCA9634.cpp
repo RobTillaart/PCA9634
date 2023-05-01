@@ -496,7 +496,7 @@ int PCA9634::I2C_SoftwareReset(uint8_t method)
 //
 uint8_t PCA9634::writeLedOut(uint8_t reg, uint8_t mask)
 {
-  if (reg > 3) return PCA963X_ERROR;
+  if (reg > 1) return PCA963X_ERROR;
   writeReg(PCA963X_LEDOUT_BASE + reg, mask);
   return PCA963X_OK;
 }
@@ -504,7 +504,7 @@ uint8_t PCA9634::writeLedOut(uint8_t reg, uint8_t mask)
 
 uint8_t PCA9634::readLedOut(uint8_t reg)
 {
-  if (reg > 3) return 0x00;
+  if (reg > 1) return 0x00;
   return readReg(PCA963X_LEDOUT_BASE + reg);
 }
 
@@ -529,7 +529,7 @@ uint8_t PCA9634::setLedDriverMode(uint8_t mode)
       mask = 0b00000000;
       break;
   }
-  for (int reg = 0; reg < 3; reg++)
+  for (int reg = 0; reg < 1; reg++)
   {
     writeLedOut(reg, mask);
   }
