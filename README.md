@@ -18,8 +18,12 @@ The 8 channels are independently configurable in steps of 1/256.
 This allows for better than 1% fine tuning of the duty-cycle
 of the PWM signal.
 
-library is an 8 channel derived variation of the PCA9635 class.
-(these might merge in the future)
+
+#### Related
+
+- https://github.com/RobTillaart/PCA9634 (8 channel)
+- https://github.com/RobTillaart/PCA9635 (16 channel)
+- https://github.com/RobTillaart/PCA9685_RT (16 channel)
 
 
 ## Interface
@@ -50,14 +54,16 @@ See PCA9634.h and datasheet for settings possible.
 Configure LED behaviour.
 
 - **uint8_t setLedDriverMode(uint8_t channel, uint8_t mode)** mode is 0..3 See datasheet for full details.
+  - returns error code, see below.
+- **uint8_t setLedDriverMode(uint8_t mode)** set same mode for ALL channels.
 - **uint8_t getLedDriverMode(uint8_t channel)** returns the current mode of the channel.
 
 |  LED mode           |  Value  |  Description                        |
 |:--------------------|:-------:|:------------------------------------|
-|  PCA9634_LEDOFF     |   0x00  |  led is 100% off, default @startup  |
-|  PCA9634_LEDON      |   0x01  |  led is 100% on.                    |
-|  PCA9634_LEDPWM     |   0x02  |  set LED in PWM mode, 0..255        |
-|  PCA9634_LEDGRPPWM  |   0x03  |  add LED to the GRPPWM*             |
+|  PCA963X_LEDOFF     |   0x00  |  led is 100% off, default @startup  |
+|  PCA963X_LEDON      |   0x01  |  led is 100% on.                    |
+|  PCA963X_LEDPWM     |   0x02  |  set LED in PWM mode, 0..255        |
+|  PCA963X_LEDGRPPWM  |   0x03  |  add LED to the GRPPWM*             |
 
 
 \* all LEDs in the group GRPPWM can be set to the same PWM value in one set.
@@ -75,7 +81,7 @@ writes three consecutive PWM registers.
 typical use is to write R, G, B values for a full colour LED.
 - **uint8_t writeN(uint8_t channel, uint8_t \* array, uint8_t count)** 
 write count consecutive PWM registers.
-May return **PCA9634_ERR_CHAN** if array has too many elements 
+May return **PCA963X_ERR_CHAN** if array has too many elements 
 (including channel as offset).
 
 
@@ -120,17 +126,16 @@ These constants makes it easier to set modes without using a non descriptive
 bit mask. The constants can be merged by OR-ing them together, see snippet:
 
 ```cpp
-ledArray.writeMode(PCA9634_MODE2, 0b00110100);
+ledArray.writeMode(PCA963X_MODE2, 0b00110100);
 
 // would become
 
 uint8_t mode2_mask = PCA9634_MODE2_BLINK | PCA9634_MODE2_INVERT | PCA9634_MODE2_TOTEMPOLE;
-ledArray.writeMode(PCA9634_MODE2, mode2_mask);
+ledArray.writeMode(PCA963X_MODE2, mode2_mask);
 
 // or even
 
 ledArray.setMode2(PCA9634_MODE2_BLINK | PCA9634_MODE2_INVERT | PCA9634_MODE2_TOTEMPOLE);
-
 ```
 
 
@@ -148,17 +153,17 @@ So 0x00 results in 41 ms blinking period (on AND off) and 0xFF in approx. 10.5 s
 
 #### Miscellaneous
 
-- **int lastError()** returns **PCA9634_OK** if all is OK, and other error codes otherwise.
+- **int lastError()** returns **PCA963X_OK** if all is OK, and other error codes otherwise.
 
 |  Error code         |  Value  |  Description           |
 |:--------------------|:-------:|:-----------------------|
-|  PCA9634_OK         |   0x00  |  Everything went well
-|  PCA9634_ERROR      |   0xFF  |  Generic error
-|  PCA9634_ERR_WRITE  |   0xFE  |  Tries to write more elements than PWM channels
-|  PCA9634_ERR_CHAN   |   0xFD  |  Channel out of range
-|  PCA9634_ERR_MODE   |   0xFC  |  Invalid mode
-|  PCA9634_ERR_REG    |   0xFB  |  Invalid register
-|  PCA9634_ERR_I2C    |   0xFA  |  I2C communication error
+|  PCA963X_OK         |   0x00  |  Everything went well
+|  PCA963X_ERROR      |   0xFF  |  Generic error
+|  PCA963X_ERR_WRITE  |   0xFE  |  Tries to write more elements than PWM channels
+|  PCA963X_ERR_CHAN   |   0xFD  |  Channel out of range
+|  PCA963X_ERR_MODE   |   0xFC  |  Invalid mode
+|  PCA963X_ERR_REG    |   0xFB  |  Invalid register
+|  PCA963X_ERR_I2C    |   0xFA  |  I2C communication error
 
 
 ## SUB CALL and ALL CALL
@@ -222,7 +227,7 @@ Returns true on success.
 If pin is not set/selected it will return HIGH.
 
 Note: the OE is LOW active. 
-The user has to set the power on value by means of a PULL DOWN resistor.
+The user has to set the power on value by means of a PULL UP / DOWN resistor.
 
 
 #### I2C Software reset
@@ -252,6 +257,43 @@ please give feedback, so the documentation can be improved.
 For further details of the development, see - #10 (comment)
 
 
+
+#### LEDOUT
+
+Experimental, needs testing, read datasheet 7.3.6
+
+The LEDOUT0 (14) .. LEDOUT3 (17) registers can be used to set the 
+operational mode how each channel / LED is controlled. 
+The typical use case is to use PWM per channel
+but one can also set a channel / LED fully ON or OFF. 
+These functions are a fast way to set multiple LEDs ON/OFF.
+
+The 4 registers LEDOUT0 .. LEDOUT3 each control 4 channels
+
+|  register  |  channels  |  mask layout  |  notes  |
+|:----------:|:----------:|:-------------:|:-------:|
+|    0       |   0 ..  3  |   33221100    |  every channel has 2 bits.
+|    1       |   4 ..  7  |   idem        |
+|    2       |   8 .. 11  |   idem        |
+|    3       |  12 .. 15  |   idem        |
+
+- **uint8_t writeLedOut(uint8_t reg, uint8_t mask)**
+  - reg = 0..3, if larger than 3 an error is returned.
+  - mask see below.
+- **uint8_t readLedOut(uint8_t reg)**
+  - reg = 0..3, if larger than 3 0x00 is returned.
+  - returns the register 
+
+To set channel 14 OFF and 15 ON simultaneously:
+
+```cpp
+uint8_t mask = PCA.readLedOut(3);
+mask &= 0b00001111;  //  set OFF both 14 and 15
+mask |= 0b01000000;  //  set ON 15
+PCA.writeLedOut(3, mask);
+```
+
+
 ## Synchronous multi-chip multi-LED operation
 
 In scenarios in which multiple LED states should be updated synchronously, the datasheet specifies a specific sequence. 
@@ -273,34 +315,45 @@ when all previously send commands since the last STOP command will be executed.
   Test functionality before implementation into your projects.
 
 
+
 ## Future
 
 #### Must
 
 - improve documentation
+  - restructure readme.md
+
 
 #### Should
+
+- improve error handling
+  - return values etc.
+  - documentation.
+- keep in sync with PCA9634/5 developments
+
+
+#### Could
 
 - unit tests
   - SUB CALL if possible?
   - ALL CALL if possible?
 - add examples
-- improve error handling (0.3.0)
-  - return values etc.
-  - documentation.
-
-
-#### Could
-
+  - read/writeLedOut()
 - **setOutputEnablePWM(uint16_t value)** PWM support ?
   - getter?
-- sync with PCA9635 developments
 - merge with PCA9635 and a PCA963X base class if possible
 - restructure function groups 
   - in  .cpp to match .h
   - readme.md
+- **setGroupPWM()**
+  - PWM also in %% ?
+- **setGroupFreq()**
+  -  set time in milliseconds and round to nearest value?
 
 
 #### Wont
-
-
+- consider implementing 
+  - clearMode1() and clearMode2() functions.
+  - only upon request.
+- merge with PCA9634/5 and a PCA963X base class if possible
+  - only upon request.

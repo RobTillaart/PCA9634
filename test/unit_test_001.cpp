@@ -104,7 +104,7 @@ unittest(test_OutputEnable)
   //  assertEqual(HIGH, ledArray.getOutputEnable()); // need mock
 
   assertTrue(ledArray.setOutputEnable(true));
-  // assertEqual(LOW, ledArray.getOutputEnable());
+  //  assertEqual(LOW, ledArray.getOutputEnable());
 
   assertTrue(ledArray.setOutputEnable(false));
   //  assertEqual(HIGH, ledArray.getOutputEnable());
