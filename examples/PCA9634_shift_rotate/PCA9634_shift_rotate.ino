@@ -88,7 +88,7 @@ void shiftLeft(uint8_t newValue)
   {
     arr[i] = arr[i + 1];
   }
-  arr[15] = newValue;
+  arr[channels - 1] = newValue;
 }
 
 
