@@ -14,17 +14,36 @@
 
 #define PCA9634_LIB_VERSION         (F("0.2.6"))
 
+
+//  mode codes
+// NEW
+#define PCA963X_MODE1               0x00
+#define PCA963X_MODE2               0x01
+//  OLD
 #define PCA9634_MODE1               0x00
 #define PCA9634_MODE2               0x01
 
+
 //  0x80 bit ==> Auto-Increment for all registers.
 //               used in writeN() - see issue #9
+//  NEW
+#define PCA963X_PWM(x)              (0x82+(x))
+#define PCA963X_GRPPWM              0x0A
+#define PCA963X_GRPFREQ             0x0B
+//  OLD
 #define PCA9634_PWM(x)              (0x82+(x))
-
 #define PCA9634_GRPPWM              0x0A
 #define PCA9634_GRPFREQ             0x0B
 
+
 //  check datasheet for details
+//  NEW
+#define PCA963X_LEDOUT_BASE         0x0C    //  0x0C..0x0D
+#define PCA963X_LEDOFF              0x00    //  default @ startup
+#define PCA963X_LEDON               0x01
+#define PCA963X_LEDPWM              0x02
+#define PCA963X_LEDGRPPWM           0x03
+//  OLD 
 #define PCA9634_LEDOUT_BASE         0x0C    //  0x0C..0x0D
 #define PCA9634_LEDOFF              0x00    //  default @ startup
 #define PCA9634_LEDON               0x01
@@ -32,6 +51,15 @@
 #define PCA9634_LEDGRPPWM           0x03
 
 //  Error codes
+// NEW
+#define PCA963X_OK                  0x00
+#define PCA963X_ERROR               0xFF
+#define PCA963X_ERR_WRITE           0xFE
+#define PCA963X_ERR_CHAN            0xFD
+#define PCA963X_ERR_MODE            0xFC
+#define PCA963X_ERR_REG             0xFB
+#define PCA963X_ERR_I2C             0xFA
+// OLD
 #define PCA9634_OK                  0x00
 #define PCA9634_ERROR               0xFF
 #define PCA9634_ERR_WRITE           0xFE
@@ -42,6 +70,7 @@
 
 
 //  Configuration bits MODE1 register
+//  OLD (todo)
 #define PCA9634_MODE1_AUTOINCR2     0x80  //  ReadOnly,  0 = disable  1 = enable
 #define PCA9634_MODE1_AUTOINCR1     0x40  //  ReadOnly,  bit1
 #define PCA9634_MODE1_AUTOINCR0     0x20  //  ReadOnly,  bit0
@@ -52,16 +81,20 @@
 #define PCA9634_MODE1_ALLCALL       0x01  //  0 = disable      1 = enable
 #define PCA9634_MODE1_NONE          0x00
 
+
 //  Configuration bits MODE2 register
+//  OLD (todo)
 #define PCA9634_MODE2_BLINK         0x20  //  0 = dim          1 = blink
 #define PCA9634_MODE2_INVERT        0x10  //  0 = normal       1 = inverted
 #define PCA9634_MODE2_ACK           0x08  //  0 = on STOP      1 = on ACK
 #define PCA9634_MODE2_TOTEMPOLE     0x04  //  0 = open drain   1 = totem-pole
 #define PCA9634_MODE2_NONE          0x00
 
+
 //  Registers in which the ALLCALL and sub-addresses are stored
 #define PCA9634_SUBADR(x)           (0x0D +(x))  // x = 1..3
 #define PCA9634_ALLCALLADR          0x11
+
 
 //  Standard ALLCALL and sub-addresses --> only work for write commands and NOT for read commands
 #define PCA9634_ALLCALL             0x70            //  TDS of chip says 0xE0, however,
@@ -72,6 +105,10 @@
 #define PCA9634_SUB3                0x74            //  see line above (0xE8 --> 0x74)
 
 
+/////////////////////////////////////////////////////
+//
+//  CLASS
+//
 class PCA9634
 {
 public:
@@ -108,6 +145,7 @@ public:
 
   void     setGroupPWM(uint8_t value);
   uint8_t  getGroupPWM();
+
   void     setGroupFREQ(uint8_t value);
   uint8_t  getGroupFREQ();
 
@@ -167,8 +205,22 @@ public:
   uint8_t  getOutputEnable();
 
 
-  //  EXPERIMENTAL 0.2.2
+  /////////////////////////////////////////////////////
+  //
+  //  EXPERIMENTAL
+  //
+  //  0.2.2
   int I2C_SoftwareReset(uint8_t method);
+  //  0.2.7
+  //  writing reg 14-17  LEDOUT
+  //  reg   LEDS
+  //  0     0..3
+  //  1     4..7
+  //  2     8..11
+  //  3     12..15
+  uint8_t  writeLedOut(uint8_t reg, uint8_t mask);
+  uint8_t  readLedOut(uint8_t reg);
+  uint8_t  setLedDriverMode(uint8_t mode);
 
 
 private:
@@ -177,8 +229,6 @@ private:
   uint8_t  readReg(uint8_t reg);
 
   uint8_t  _address;
-  uint8_t  _register;
-  uint8_t  _data;
   int      _error;
   uint8_t  _channelCount = 8;
   uint8_t  _OutputEnablePin;
