@@ -70,9 +70,6 @@
 #define PCA9634_ERR_I2C             0xFA
 
 
-//  TODO PCA963X_ constants below here
-
-
 //  Configuration bits MODE1 register
 // NEW
 #define PCA963X_MODE1_AUTOINCR2     0x80  //  ReadOnly,  0 = disable  1 = enable
@@ -113,10 +110,10 @@
 
 //  Registers in which the ALLCALL and sub-addresses are stored
 //  NEW
-#define PCA963X_SUBADR(x)           (0x0D +(x))  // x = 1..3
+#define PCA963X_SUBADR(x)           (0x0D +(x))  //  x = 1..3
 #define PCA963X_ALLCALLADR          0x11
 //  OLD
-#define PCA9634_SUBADR(x)           (0x0D +(x))  // x = 1..3
+#define PCA9634_SUBADR(x)           (0x0D +(x))  //  x = 1..3
 #define PCA9634_ALLCALLADR          0x11
 
 

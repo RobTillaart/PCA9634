@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - renaming #defines PCA963X... to prepare merge with PCA9634.
   - old defines will work until next major release
 - update keywords.txt
+- update readme.md
 
 
 ## [0.2.7] - 2023-05-01
@@ -24,7 +25,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - reorder + refactor code
 - update readme.md
 - minor edits
-
 
 ## [0.2.6] - 2023-03-07
 - add OutputEnable control functions.
