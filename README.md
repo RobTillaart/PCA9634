@@ -340,19 +340,21 @@ when all previously send commands since the last STOP command will be executed.
   - read/writeLedOut()
 - **setOutputEnablePWM(uint16_t value)** PWM support ?
   - getter?
-- merge with PCA9635 and a PCA963X base class if possible
 - restructure function groups 
   - in  .cpp to match .h
   - readme.md
-- **setGroupPWM()**
-  - PWM also in %% ?
 - **setGroupFreq()**
   -  set time in milliseconds and round to nearest value?
 
 
 #### Wont
+
 - consider implementing 
   - clearMode1() and clearMode2() functions.
   - only upon request.
 - merge with PCA9634/5 and a PCA963X base class if possible
+  - not easy, more alignment is desirable.
   - only upon request.
+- **setGroupPWM()**
+  - PWM also in %% ?  (trivial for user)
+
