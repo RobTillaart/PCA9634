@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.3.0] - 2023-12-11
 - refactor API, begin()
 - update readme.md
-- add **getAddress()**
+- add **uint8_t getAddress()**
 - minor edits
 
 ----
