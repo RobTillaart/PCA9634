@@ -32,7 +32,7 @@ bool PCA9634::begin(uint8_t mode1_mask, uint8_t mode2_mask)
 }
 
 
-uint8_t PCA9634::isConnected()
+bool PCA9634::isConnected()
 {
   _wire->beginTransmission(_address);
   _error = _wire->endTransmission();
@@ -40,7 +40,7 @@ uint8_t PCA9634::isConnected()
 }
 
 
-bool PCA9634::getAddress()
+uint8_t PCA9634::getAddress()
 {
   return _address;
 }
