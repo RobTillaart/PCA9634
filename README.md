@@ -60,22 +60,22 @@ before calling **begin()**.
 and optional the Wire interface as parameter.
 - **bool begin(uint8_t mode1_mask = PCA963X_MODE1_ALLCALL, uint8_t mode2_mask = PCA963X_MODE2_NONE)**
 initializes the library after startup. Optionally setting the MODE1 and MODE2 configuration registers.
-See PCA9634.h and datasheet for settings possible.
+See .h and datasheet for settings possible.
 - **void configure(uint8_t mode1_mask, uint8_t mode2_mask)**
 To configure the library after startup one can set the MODE1 and MODE2 configuration registers.
-See PCA9634.h and datasheet for settings possible.
+See .h and datasheet for settings possible.
 - **bool isConnected()** checks if address is available on I2C bus.
-- **uint8_t channelCount()** returns the number of channels = 8.
+- **uint8_t channelCount()** returns the number of channels (8).
 
 
 ### LedDriverMode
 
-Configure LED behaviour. Check datasheet for details.
+Configure LED behaviour. Channel = 0..3. Check datasheet for details.
 
-- **uint8_t setLedDriverMode(uint8_t channel, uint8_t mode)** set mode for one channel (0..3).
+- **uint8_t setLedDriverMode(uint8_t channel, uint8_t mode)** set mode for one channel.
   - returns error code, see below.
 - **uint8_t setLedDriverModeAll(uint8_t mode)** set same mode for ALL channels.
-- **uint8_t getLedDriverMode(uint8_t channel)** returns the current mode of the channel. (0..3).
+- **uint8_t getLedDriverMode(uint8_t channel)** returns the current mode of the channel.
 
 |  LED mode           |  Value  |  Description                        |
 |:--------------------|:-------:|:------------------------------------|
@@ -109,7 +109,7 @@ Write all channels at once
 - **uint8_t allOff()** idem.
 
 
-#### Multi call writes.
+### Multi call writes.
 
 - **uint8_t writeN_noStop(uint8_t channel, uint8_t \* array, uint8_t count)** 
 See **Synchronous multi-chip multi-LED operation** below.
@@ -128,7 +128,7 @@ Used to configure the PCA963x general behaviour. Check datasheet for details.
 
 Obsolete in near future, use functions above as those are less error prone.
 
-- **uint8_t writeMode(uint8_t reg, uint8_t value)** configuration of one of the two configuration registers. 
+- **uint8_t writeMode(uint8_t reg, uint8_t value)** configuration of one of the two configuration registers.
 - **uint8_t readMode(uint8_t reg)** reads the configured mode
 
 
@@ -285,14 +285,14 @@ ledArray.I2C_SoftwareReset(0);  //  for method 0
 In case you experience issues with this function on your chips (non-PCA9634),
 please give feedback, so the documentation can be improved.
 
-For further details of the development, see - #10 (comment)
+For further details of the development, see - #10 (PCA9634 repo)
 
 
 ### LEDOUT
 
 Experimental, needs testing, read datasheet 7.3.6
 
-The LEDOUT0 (12) and LEDOUT1 (13) registers can be used to set the 
+The LEDOUT0 (12) .. LEDOUT1 (13) registers can be used to set the 
 operational mode how each channel / LED is controlled. 
 The typical use case is to use PWM per channel
 but one can also set a channel / LED fully ON or OFF. 
@@ -351,16 +351,13 @@ when all previously send commands since the last STOP command will be executed.
 - improve documentation
   - restructure readme.md
 
-
 #### Should
 
+- keep in sync with PCA9632/34/35/85 developments
 - improve error handling
   - return values etc.
   - documentation.
-- keep in sync with PCA9634/5 developments
-- keep in sync with PCA9632 developments
-- keep in sync with PCA9685 developments
-
+- #defines ==> const int?
 
 #### Could
 
@@ -377,8 +374,7 @@ when all previously send commands since the last STOP command will be executed.
   - readme.md
 - **setGroupFreq()**
   -  set time in milliseconds and round to nearest value?
-- read back RGBW (cache?)
-
+- read back (cache?)
 
 #### Wont
 
