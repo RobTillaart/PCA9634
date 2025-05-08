@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.4.1] - 2024-05-08
 - fix #36, sync PCA9632
+- rename setLedDriverMode() => setLedDriverModeAll()
 - add **writeAll(arr)**
 - add **allOff()**
 - update readme.md

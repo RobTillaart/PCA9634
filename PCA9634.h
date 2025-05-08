@@ -243,6 +243,7 @@ public:
   //  EXPERIMENTAL
   //
   //  0.2.2
+  //  method = 0 or 1  See implementation
   int I2C_SoftwareReset(uint8_t method);
   //  0.2.7
   //  writing reg 12-13  LEDOUT
