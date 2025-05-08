@@ -3,7 +3,7 @@
 //    FILE: PCA9634.h
 //  AUTHOR: Rob Tillaart
 //    DATE: 2022-01-03
-// VERSION: 0.4.0
+// VERSION: 0.4.1
 // PURPOSE: Arduino library for PCA9634 I2C LED driver, 8 channel
 //     URL: https://github.com/RobTillaart/PCA9634
 
@@ -12,7 +12,7 @@
 #include "Wire.h"
 
 
-#define PCA9634_LIB_VERSION         (F("0.4.0"))
+#define PCA9634_LIB_VERSION         (F("0.4.1"))
 
 
 //  mode codes
@@ -134,10 +134,7 @@
 #define PCA9634_SUB3                0x74  //  see line above (0xE8 --> 0x74)
 
 
-/////////////////////////////////////////////////////
-//
-//  CLASS
-//
+
 class PCA9634
 {
 public:
@@ -156,25 +153,35 @@ public:
   uint8_t  configure(uint8_t mode1_mask, uint8_t mode2_mask);
   uint8_t  channelCount();
 
+
+  /////////////////////////////////////////////////////
+  //
+  //  LED DRIVER MODE
+  //
+  uint8_t  setLedDriverModeAll(uint8_t mode);
   uint8_t  setLedDriverMode(uint8_t channel, uint8_t mode);
   uint8_t  getLedDriverMode(uint8_t channel);
 
 
-  //  reg = 1, 2  check datasheet for values
-  uint8_t  writeMode(uint8_t reg, uint8_t value);
-  uint8_t  readMode(uint8_t reg);
-  //  convenience wrappers
+  /////////////////////////////////////////////////////
+  //
+  //  WRITE MODE REGISTERS
+  //
+  //  values == masks see defines above
+  //  check datasheet for detailed meaning
   uint8_t  setMode1(uint8_t value);
   uint8_t  setMode2(uint8_t value);
   uint8_t  getMode1();
   uint8_t  getMode2();
 
 
-  void     setGroupPWM(uint8_t value);
+  /////////////////////////////////////////////////////
+  //
+  //  GROUP REGISTERS
+  //
+  uint8_t  setGroupPWM(uint8_t value);
   uint8_t  getGroupPWM();
-
-
-  void     setGroupFREQ(uint8_t value);
+  uint8_t  setGroupFREQ(uint8_t value);
   uint8_t  getGroupFREQ();
 
 
@@ -182,17 +189,21 @@ public:
   //
   //  WRITE
   //
-  //  single PWM setting
+  //  write single PWM registers
   uint8_t  write1(uint8_t channel, uint8_t value);
 
-  //  RGB setting, write three consecutive PWM registers
+  //  write three consecutive PWM registers, RGB setting
   uint8_t  write3(uint8_t channel, uint8_t R, uint8_t G, uint8_t B);
 
   //  generic worker, write N consecutive PWM registers
-  uint8_t  writeN(uint8_t channel, uint8_t* arr, uint8_t count);
+  uint8_t  writeN(uint8_t channel, uint8_t * arr, uint8_t count);
+
+  //  array at least 8 elements
+  uint8_t  writeAll(uint8_t * arr);  
+  uint8_t  allOff();
 
   //  generic worker, write N consecutive PWM registers without Stop command
-  uint8_t  writeN_noStop(uint8_t channel, uint8_t* arr, uint8_t count);
+  uint8_t  writeN_noStop(uint8_t channel, uint8_t * arr, uint8_t count);
 
   //  write stop command to end transmission
   uint8_t  writeStop();
@@ -200,15 +211,7 @@ public:
 
   /////////////////////////////////////////////////////
   //
-  //  ERROR
-  //
-  //  note error flag is reset after read!
-  int      lastError();
-
-
-  /////////////////////////////////////////////////////
-  //
-  //  SUB CALL  -  ALL CALL  (since 0.2.0)
+  //  SUB CALL
   //
   //  nr = { 1, 2, 3 }
   bool     enableSubCall(uint8_t nr);
@@ -216,7 +219,9 @@ public:
   bool     isEnabledSubCall(uint8_t nr);
   bool     setSubCallAddress(uint8_t nr, uint8_t address);
   uint8_t  getSubCallAddress(uint8_t nr);
-
+  //
+  //  ALL CALL
+  //
   bool     enableAllCall();
   bool     disableAllCall();
   bool     isEnabledAllCall();
@@ -246,20 +251,38 @@ public:
   //  1     4..7
   uint8_t  writeLedOut(uint8_t reg, uint8_t mask);
   uint8_t  readLedOut(uint8_t reg);
+
+
+  /////////////////////////////////////////////////////
+  //
+  //  ERROR
+  //
+  //  note error flag is reset after read!
+  int      lastError();
+
+
+  /////////////////////////////////////////////////////
+  //
+  //  OBSOLETE future
+  //
+  [[deprecated("Use setLedDriverModeAll(mode) instead")]]
   uint8_t  setLedDriverMode(uint8_t mode);
+
+  [[deprecated("use setMode1(value) or setMode2(value) instead")]]
+  uint8_t  writeMode(uint8_t reg, uint8_t value);
+  uint8_t  readMode(uint8_t reg);
 
 
 private:
   //  DIRECT CONTROL
-  uint8_t  writeReg(uint8_t reg, uint8_t value);  //  returns error status.
-  uint8_t  readReg(uint8_t reg);
+  uint8_t  writeRegister(uint8_t reg, uint8_t value);  //  returns error status.
+  uint8_t  readRegister(uint8_t reg);
 
   uint8_t  _address;
-  int      _error;
+  TwoWire * _wire;
+  int      _error = PCA963X_OK;
   uint8_t  _channelCount = 8;
   uint8_t  _OutputEnablePin;
-
-  TwoWire*  _wire;
 };
 
 

@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [0.4.1] - 2024-05-08
+- fix #36, sync PCA9632
+- add **writeAll(arr)**
+- add **allOff()**
+- update readme.md
+- update examples
+- minor edits
+
 ## [0.4.0] - 2024-01-18
 - fix #34, setLedDriverMode(uint8_t mode)
 - minor edits examples
